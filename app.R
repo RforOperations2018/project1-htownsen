@@ -24,12 +24,17 @@ library(shinythemes)
 df.load = read.csv("crashdata_beaver15.csv", strip.white = T)
 # Make all the column headers lower cased, so they are easier to type
 names(df.load) <- tolower(names(df.load))
+# Rename factors: change day of week from ints to names
+df.load$day_of_week = mapvalues(df.load$day_of_week, from = c(1, 2, 3, 4, 5, 6, 7), to = c("Sunday", "Monday", "Tuesday", 
+                                                         "Wednesday", "Thursday", "Friday", "Saturday"))
+
+day.options = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 pdf(NULL)
 
 # Shiny Dashboard Section which defines the UI
 # Starting with the header
-header <- dashboardHeader(title ="Beaver County, PA Car Crash Data for 2015")
+header <- dashboardHeader(title ="Crash Dashboard")
 
 # Shiny sidebar
 sidebar <-dashboardSidebar(
@@ -37,7 +42,23 @@ sidebar <-dashboardSidebar(
     id = "tabs",
     menuItem("Distractions", icon = icon("mobile"), tabName = "dist", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Weather", icon = icon("umbrella"), tabName = "weath", badgeLabel = "new page", badgeColor = "green"),
-    menuItem("Behavior", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green")))
+    menuItem("Behavior", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
+    pickerInput("daySelect",
+                label = "Day of the Week:",
+                choices = day.options,
+                options = list(`actions-box` = TRUE),
+                # Select Saturday and Sunday as default
+                selected = day.options[6:7],
+                multiple = TRUE)
+    # # Birth Selection
+    # sliderInput("birthSelect",
+    #             "Birth Year:",
+    #             min = min(starwars.load$birth_year, na.rm = T),
+    #             max = max(starwars.load$birth_year, na.rm = T),
+    #             value = c(min(starwars.load$birth_year, na.rm = T), max(starwars.load$birth_year, na.rm = T)),
+    #             step = 1)
+  )
+)
 
   
 
