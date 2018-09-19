@@ -43,6 +43,8 @@ sidebar <-dashboardSidebar(
     menuItem("Distractions", icon = icon("mobile"), tabName = "dist", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Weather", icon = icon("umbrella"), tabName = "weath", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Behavior", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
+    
+    # Day of the Week Selection: Filter/Input 1
     pickerInput("daySelect",
                 label = "Day of the Week:",
                 choices = day.options,
@@ -50,6 +52,7 @@ sidebar <-dashboardSidebar(
                 # Select Saturday and Sunday as default
                 selected = day.options[6:7],
                 multiple = TRUE)
+    
     # # Birth Selection
     # sliderInput("birthSelect",
     #             "Birth Year:",
@@ -60,10 +63,38 @@ sidebar <-dashboardSidebar(
   )
 )
 
-  
 
-body <- dashboardBody(tabItems())
-
+body <- dashboardBody(tabItems(
+  tabItem("dist",
+          fluidRow(
+            valueBoxOutput("crashes"),
+            infoBoxOutput("bikes"),
+            valueBoxOutput("deaths") # fatal_count
+          ),
+          fluidRow(
+            tabBox(title = "Distractions",
+                   width = 12,
+                   tabPanel("Cell Phones", plotlyOutput("plotphone")),
+                   tabPanel("Deer", plotlyOutput("plotdeer")))
+          )
+  ),
+  tabItem("weath",
+          fluidPage(
+            box(title = "Selected Weather-Related Crashes", DT::dataTableOutput("table"), width = 12))
+  ),
+  tabItem("beh",
+          fluidRow(
+            valueBoxOutput("alcohol")
+          ),
+          fluidRow(
+            tabBox(title = "Behaviors",
+                   width = 12
+              
+            )
+          )
+          )
+)
+)
 
 
 # The UI just creates the combined dashboard page. 
