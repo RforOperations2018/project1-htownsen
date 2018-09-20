@@ -95,7 +95,7 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("weath",
           fluidPage(
-            box(title = "Weather Conditions", status = "primary", plotOutput("plotweath", height = 300), width=8),
+            box(title = "Weather Conditions", status = "primary", plotOutput("plotweath"), width=8),
             # Filter/Input 3: Weather Conditions
             box(width=4,
               title = "Inputs", status = "warning",
@@ -166,15 +166,15 @@ server <- function(input, output) {
   
   # Third Reactive Group for Behaviors Page, includes main filters on sidebar
   bInput <- reactive({
-    df.load %>% 
+    df <- df.load %>% 
       # Day of the week filter
       filter(day_of_week %in% input$daySelect) %>%
       # Slider for number of cars filter
-      filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2]) %>%
+      filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2])
       
       if (input$aggSelect==T) {
-        filter(aggressive_driving=="Yes")
-      } 
+        df <- df %>% filter(aggressive_driving=="Yes")
+      }
     return(df)
   })
   
@@ -183,7 +183,9 @@ server <- function(input, output) {
     d <- dfInput()
     ggplot(d, aes(x = cell_phone, color = cell_phone, fill = cell_phone)) + 
       geom_bar() + 
-      theme(legend.position="none")
+      theme(legend.position="none") +
+      xlab("Cell Phone Related") +
+      ylab("Number of Observations in the Data")
   })
   
   # PLOT 2: Deer Plot
@@ -191,7 +193,9 @@ server <- function(input, output) {
     d <- dfInput()
     ggplot(d, aes(x = deer_related, color = deer_related, fill = deer_related)) + 
       geom_bar() + 
-      theme(legend.position="none")
+      theme(legend.position="none") +
+      xlab("Deer Related Crash") +
+      ylab("Number of Observations in the Data")
   })
   # Value Box 1: Total cars
   output$crashes <- renderValueBox({
@@ -219,7 +223,9 @@ server <- function(input, output) {
     w <- wInput()
     ggplot(w, aes(x = weather, color = weather, fill = weather)) + 
       geom_bar() + 
-      theme(legend.position="none")
+      theme(legend.position="none") +
+      xlab("Weather Condition(s)") +
+      ylab("Number of Observations in the Data")
   })
   
   # Data Table filtered by behaviors
@@ -230,9 +236,11 @@ server <- function(input, output) {
   # PLOT 4: General Line Plot
   output$plotgen <- renderPlot({
     d <- dfInput()
-    ggplot(d, aes(x = person_count, y = automobile_count, fill = fatal)) + 
+    ggplot(d, aes(x = person_count, y = automobile_count)) + 
       geom_count() + 
-      theme(legend.position="none")
+      theme(legend.position="none") +
+      xlab("Number of People Involved in Crash") +
+      ylab("Number of Automobiles Involved in Crash")
   })
 
 }
