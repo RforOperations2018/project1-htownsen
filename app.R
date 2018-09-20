@@ -42,7 +42,7 @@ sidebar <-dashboardSidebar(
     id = "tabs",
     menuItem("Distractions", icon = icon("mobile"), tabName = "dist", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Weather", icon = icon("umbrella"), tabName = "weath", badgeLabel = "new page", badgeColor = "green"),
-    menuItem("Behavior", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
+    menuItem("Behaviors", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
     
     # Day of the Week Selection: Filter/Input 1
     pickerInput("daySelect",
@@ -89,6 +89,7 @@ body <- dashboardBody(tabItems(
           fluidRow(
             tabBox(title = "Behaviors",
                    width = 12
+                   #tabPanel("Day of Week", plotlyOutput("plot1"))
               
             )
           )
@@ -105,7 +106,17 @@ ui <- dashboardPage(header, sidebar, body)
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   #output$distPlot <- renderPlot({
+  dfInput <- reactive({
+    df <- df.load %>% 
+      filter(input$daySelect %in% day_of_week)
+    return(df)
+  })
+  
+  # PLOT 1: Cell Phones Plot
+  output$plotphone <- renderPlotly({
+    d <- dfInput()
+    ggplot(d, aes(x = cell_phone, y = person_count, fill = cell_phone)) + geom_bar()
+  })
 
 }
 
