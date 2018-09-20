@@ -103,7 +103,10 @@ body <- dashboardBody(tabItems(
                 "Rain" = "Rain",
                 "Snow" = "Snow",
                 "Fog" = "Fog",
-                "Sleet/Hail" = "Sleet/Hail")
+                "Sleet/Hail" = "Sleet/Hail"),
+                selected = c("No Adverse Conditions", 
+                             "Rain",
+                             "Snow")
               )
             )
           )
@@ -133,7 +136,8 @@ ui <- dashboardPage(header, sidebar, body)
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-   
+  
+  # First Reactive Group, general, just includes two sidebar inputs 
   dfInput <- reactive({
     df <- df.load %>% 
       # Day of the week filter
@@ -151,6 +155,20 @@ server <- function(input, output) {
       # Slider for number of cars filter
       filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2]) %>%
       filter(weather %in% input$weathSelect)
+    return(df)
+  })
+  
+  # Third Reactive Group for Behaviors Page, includes main filters on sidebar
+  bInput <- reactive({
+    df <- df.load %>% 
+      # Day of the week filter
+      filter(day_of_week %in% input$daySelect) %>%
+      # Slider for number of cars filter
+      filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2]) %>%
+      
+      if (input$aggSelect==TRUE) {
+        df <- subset(df, aggressive_driving=="Yes")
+      }
     return(df)
   })
   
@@ -196,6 +214,12 @@ server <- function(input, output) {
     ggplot(w, aes(x = weather, color = weather, fill = weather)) + 
       geom_bar() + 
       theme(legend.position="none")
+  })
+  
+  # Data Table filtered by behaviors
+  output$table <- DT::renderDataTable({
+    b <- bInput()
+    subset(b, select = c(day_of_week, automobile_count, aggressive_driving))
   })
 
 }
