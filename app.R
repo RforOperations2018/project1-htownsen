@@ -43,6 +43,15 @@ df.load$weather = mapvalues(df.load$weather, from = c(1, 2, 3, 4, 5),
 # Rename aggressive_driving indicator to "Yes" and "No"
 df.load$aggressive_driving = mapvalues(df.load$aggressive_driving, from = c(0, 1), to = c("No", "Yes"))
 
+# Rename alcohol_related indicator to "Yes" and "No"
+df.load$alcohol_related = mapvalues(df.load$alcohol_related, from = c(0, 1), to = c("No", "Yes"))
+
+# Rename speeding indicator to "Yes" and "No"
+df.load$speeding = mapvalues(df.load$speeding, from = c(0, 1), to = c("No", "Yes"))
+
+# Rename tailgating indicator to "Yes" and "No"
+df.load$tailgating = mapvalues(df.load$tailgating, from = c(0, 1), to = c("No", "Yes"))
+
 pdf(NULL)
 
 ############################################################################################################################
@@ -95,7 +104,7 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("weath",
           fluidPage(
-            box(title = "Weather Conditions", status = "primary", plotOutput("plotweath"), width=8),
+            box(title = "Weather Conditions", status = "primary", plotlyOutput("plotweath"), width=8),
             # Filter/Input 3: Weather Conditions
             box(width=4,
               title = "Inputs", status = "warning",
@@ -114,7 +123,7 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("beh",
           fluidRow(
-            box(title = "Behaviors", status = "primary", DT::dataTableOutput("table"), width = 8),
+            box(title = "Data Table: Option to Filter by Behaviors", status = "primary", DT::dataTableOutput("table"), width = 8),
             box(width=4,
                 title="Inputs", status = "warning",
                 tags$b("Select Behavior(s):"),
@@ -128,7 +137,7 @@ body <- dashboardBody(tabItems(
 ),
   tabItem("gen",
           fluidPage(
-            box(title = "General Crash Information", status = "primary", plotOutput("plotgen", height = 500), width=12)
+            box(title = "General Crash Information", status = "primary", plotlyOutput("plotgen", height = 500), width=12)
           )
           )
 )
@@ -171,10 +180,20 @@ server <- function(input, output) {
       filter(day_of_week %in% input$daySelect) %>%
       # Slider for number of cars filter
       filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2])
-      
-      if (input$aggSelect==T) {
+    
+    # Individual if statements for each single checkbox (indicator columns) for behaviors
+    if (input$aggSelect==T) {
         df <- df %>% filter(aggressive_driving=="Yes")
       }
+    if (input$beerSelect==T) {
+      df <- df %>% filter(alcohol_related=="Yes")
+    }
+    if (input$speedSelect==T) {
+      df <- df %>% filter(speeding=="Yes")
+    }
+    if (input$tailSelect==T) {
+      df <- df %>% filter(tailgating=="Yes")
+    }
     return(df)
   })
   
@@ -219,7 +238,7 @@ server <- function(input, output) {
   })
   
   # PLOT 3: Weather Plot
-  output$plotweath <- renderPlot({
+  output$plotweath <- renderPlotly({
     w <- wInput()
     ggplot(w, aes(x = weather, color = weather, fill = weather)) + 
       geom_bar() + 
@@ -230,11 +249,11 @@ server <- function(input, output) {
   
   # Data Table filtered by behaviors
   output$table <- DT::renderDataTable({
-    subset(bInput(), select = c(day_of_week, automobile_count, aggressive_driving))
+    subset(bInput(), select = c(day_of_week, automobile_count, aggressive_driving, alcohol_related, speeding, tailgating))
   })
   
   # PLOT 4: General Line Plot
-  output$plotgen <- renderPlot({
+  output$plotgen <- renderPlotly({
     d <- dfInput()
     ggplot(d, aes(x = person_count, y = automobile_count)) + 
       geom_count() + 
