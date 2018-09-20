@@ -30,6 +30,9 @@ df.load$day_of_week = mapvalues(df.load$day_of_week, from = c(1, 2, 3, 4, 5, 6, 
 
 day.options = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
+# Rename cell_phone indicator to "Yes" and "No"
+df.load$cell_phone = mapvalues(df.load$cell_phone, from = c(0, 1), to = c("No", "Yes"))
+
 pdf(NULL)
 
 # Shiny Dashboard Section which defines the UI
@@ -66,11 +69,11 @@ sidebar <-dashboardSidebar(
 
 body <- dashboardBody(tabItems(
   tabItem("dist",
-          fluidRow(
-            valueBoxOutput("crashes"),
-            infoBoxOutput("bikes"),
-            valueBoxOutput("deaths") # fatal_count
-          ),
+          # fluidRow(
+          #   valueBoxOutput("crashes"),
+          #   infoBoxOutput("bikes"),
+          #   valueBoxOutput("deaths") # fatal_count
+          # ),
           fluidRow(
             tabBox(title = "Distractions",
                    width = 12,
@@ -83,9 +86,6 @@ body <- dashboardBody(tabItems(
             box(title = "Selected Weather-Related Crashes", DT::dataTableOutput("table"), width = 12))
   ),
   tabItem("beh",
-          fluidRow(
-            valueBoxOutput("alcohol")
-          ),
           fluidRow(
             tabBox(title = "Behaviors",
                    width = 12
@@ -108,14 +108,14 @@ server <- function(input, output) {
    
   dfInput <- reactive({
     df <- df.load %>% 
-      filter(input$daySelect %in% day_of_week)
+      filter(day_of_week %in% input$daySelect )
     return(df)
   })
   
   # PLOT 1: Cell Phones Plot
   output$plotphone <- renderPlotly({
     d <- dfInput()
-    ggplot(d, aes(x = cell_phone, y = person_count, fill = cell_phone)) + geom_bar()
+    ggplot(d, aes(x = cell_phone, color = cell_phone, fill = cell_phone)) + geom_bar() 
   })
 
 }
