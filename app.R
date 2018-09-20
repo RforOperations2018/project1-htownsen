@@ -57,6 +57,7 @@ sidebar <-dashboardSidebar(
     menuItem("Distractions", icon = icon("mobile"), tabName = "dist", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Weather", icon = icon("umbrella"), tabName = "weath", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Behaviors", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
+    menuItem("General", icon = icon("info"), tabName = "gen", badgeLabel = "new page", badgeColor = "yellow"),
     
     # Filter/Input 1: Day of the Week Selection
     pickerInput("daySelect",
