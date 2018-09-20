@@ -51,22 +51,22 @@ sidebar <-dashboardSidebar(
     menuItem("Weather", icon = icon("umbrella"), tabName = "weath", badgeLabel = "new page", badgeColor = "green"),
     menuItem("Behaviors", icon = icon("beer"), tabName = "beh", badgeLabel = "new page", badgeColor = "green"),
     
-    # Day of the Week Selection: Filter/Input 1
+    # Filter/Input 1: Day of the Week Selection
     pickerInput("daySelect",
                 label = "Day of the Week:",
                 choices = day.options,
                 options = list(`actions-box` = TRUE),
                 # Select Saturday and Sunday as default
                 selected = day.options[6:7],
-                multiple = TRUE)
+                multiple = TRUE),
     
-    # # Birth Selection
-    # sliderInput("birthSelect",
-    #             "Birth Year:",
-    #             min = min(starwars.load$birth_year, na.rm = T),
-    #             max = max(starwars.load$birth_year, na.rm = T),
-    #             value = c(min(starwars.load$birth_year, na.rm = T), max(starwars.load$birth_year, na.rm = T)),
-    #             step = 1)
+    # Filter/Input 2: Slider for number of cars involved
+    sliderInput("autoSelect",
+                "Number of Cars Involved:",
+                min = min(df.load$automobile_count, na.rm = T),
+                max = max(df.load$automobile_count, na.rm = T),
+                value = c(min(df.load$automobile_count, na.rm = T), max(df.load$automobile_count, na.rm = T)),
+                step = 1)
   )
 )
 
@@ -112,7 +112,10 @@ server <- function(input, output) {
    
   dfInput <- reactive({
     df <- df.load %>% 
-      filter(day_of_week %in% input$daySelect )
+      # Day of the week filter
+      filter(day_of_week %in% input$daySelect) %>%
+      # Slider for number of cars filter
+      filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2])
     return(df)
   })
   
