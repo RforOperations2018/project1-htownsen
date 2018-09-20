@@ -40,6 +40,9 @@ df.load$deer_related = mapvalues(df.load$deer_related, from = c(0, 1), to = c("N
 df.load$weather = mapvalues(df.load$weather, from = c(1, 2, 3, 4, 5), 
                             to = c("No Adverse Conditions", "Rain", "Sleet/Hail", "Snow", "Fog"))
 
+# Rename aggressive_driving indicator to "Yes" and "No"
+df.load$aggressive_driving = mapvalues(df.load$aggressive_driving, from = c(0, 1), to = c("No", "Yes"))
+
 pdf(NULL)
 
 ############################################################################################################################
@@ -92,7 +95,7 @@ body <- dashboardBody(tabItems(
   tabItem("weath",
           fluidPage(
             box(title = "Weather Conditions", status = "primary", plotOutput("plotweath", height = 300), width=8),
-            
+            # Filter/Input 3: Weather Conditions
             box(width=4,
               title = "Inputs", status = "warning",
               checkboxGroupInput("weathSelect", "Select Weather Events:", choices= c(
@@ -107,13 +110,18 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("beh",
           fluidRow(
-            tabBox(title = "Behaviors",
-                   width = 12
-                   #tabPanel("Day of Week", plotlyOutput("plot1"))
-              
-            )
+            box(title = "Behaviors", status = "primary", DT::dataTableOutput("table"), width = 8),
+            box(width=4,
+                title="Inputs", status = "warning",
+                tags$b("Select Behavior(s):"),
+                # Many new single checkboxes, pulling from different columns
+                checkboxInput("aggSelect",  "Aggresive Driving"),
+                checkboxInput("beerSelect", "Alcohol Involved"),
+                checkboxInput("speedSelect", "Speeding"),
+                checkboxInput("tailSelect", "Tailgating")
           )
           )
+)
 )
 )
 
