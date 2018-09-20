@@ -132,11 +132,11 @@ server <- function(input, output) {
       theme(legend.position="none")
   })
   # Value Box 1: 
-  output$height <- renderValueBox({
-    sw <- swInput()
-    num <- round(mean(sw$height, na.rm = T), 2)
+  output$crashes <- renderValueBox({
+    d <- dfInput()
+    num <- sum(d$automobile_count, na.rm = T)
     
-    valueBox(subtitle = "Avg Height", value = num, icon = icon("sort-numeric-asc"), color = "green")
+    valueBox(subtitle = "Total Automobiles", value = num, icon = icon("sort-numeric-asc"), color = "green")
   })
 
 }
