@@ -131,12 +131,18 @@ server <- function(input, output) {
       geom_bar() + 
       theme(legend.position="none")
   })
-  # Value Box 1: 
+  # Value Box 1: Total cars
   output$crashes <- renderValueBox({
     d <- dfInput()
     num <- sum(d$automobile_count, na.rm = T)
-    
-    valueBox(subtitle = "Total Automobiles", value = num, icon = icon("sort-numeric-asc"), color = "green")
+    valueBox(subtitle = "Total Automobiles", value = num, icon = icon("car"), color = "maroon")
+  })
+  
+  # Value Box 2: Total Deaths
+  output$deaths <- renderValueBox({
+    d <- dfInput()
+    num2 <- sum(d$fatal_count, na.rm = T)
+    valueBox(subtitle = "Total Fatalities", value = num2, icon = icon("exclamation"), color = "orange")
   })
 
 }
