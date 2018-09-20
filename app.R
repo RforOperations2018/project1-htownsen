@@ -36,6 +36,10 @@ df.load$cell_phone = mapvalues(df.load$cell_phone, from = c(0, 1), to = c("No", 
 # Rename deer_related indicator to "Yes" and "No"
 df.load$deer_related = mapvalues(df.load$deer_related, from = c(0, 1), to = c("No", "Yes"))
 
+# Rename weather events from numerics to actual levels
+df.load$weather = mapvalues(df.load$weather, from = c(1, 2, 3, 4, 5), 
+                            to = c("No Adverse Conditions", "Rain", "Sleet/Hail", "Snow", "Fog"))
+
 pdf(NULL)
 
 ############################################################################################################################
@@ -87,7 +91,19 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("weath",
           fluidPage(
-            box(title = "Selected Weather-Related Crashes", DT::dataTableOutput("table"), width = 12))
+            box(title = "Weather Conditions", status = "primary", plotOutput("plotweath", height = 300), width=8),
+            
+            box(width=4,
+              title = "Inputs", status = "warning",
+              checkboxGroupInput("weathSelect", "Select Weather Events:", choices= c(
+                "No Adverse Conditions" = "No Adverse Conditions",
+                "Rain" = "Rain",
+                "Snow" = "Snow",
+                "Fog" = "Fog",
+                "Sleet/Hail" = "Sleet/Hail")
+              )
+            )
+          )
   ),
   tabItem("beh",
           fluidRow(
