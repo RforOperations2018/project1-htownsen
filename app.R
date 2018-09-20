@@ -144,6 +144,13 @@ server <- function(input, output) {
     num2 <- sum(d$fatal_count, na.rm = T)
     valueBox(subtitle = "Total Fatalities", value = num2, icon = icon("exclamation"), color = "orange")
   })
+  
+  # Info Box 1: Bikes
+  output$bikes <- renderInfoBox({
+    d <- dfInput()
+    num3 <- sum(d$bicycle_count, na.rm = T)
+    infoBox("Total Bikes", value = num3, subtitle = paste(nrow(d), "total crashes"), icon = icon("bicycle"), color = "purple")
+  })
 
 }
 
