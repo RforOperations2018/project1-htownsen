@@ -160,15 +160,15 @@ server <- function(input, output) {
   
   # Third Reactive Group for Behaviors Page, includes main filters on sidebar
   bInput <- reactive({
-    df <- df.load %>% 
+    df.load %>% 
       # Day of the week filter
       filter(day_of_week %in% input$daySelect) %>%
       # Slider for number of cars filter
       filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2]) %>%
       
-      if (input$aggSelect==TRUE) {
-        df <- subset(df, aggressive_driving=="Yes")
-      }
+      if (input$aggSelect==T) {
+        filter(aggressive_driving=="Yes")
+      } 
     return(df)
   })
   
@@ -218,8 +218,7 @@ server <- function(input, output) {
   
   # Data Table filtered by behaviors
   output$table <- DT::renderDataTable({
-    b <- bInput()
-    subset(b, select = c(day_of_week, automobile_count, aggressive_driving))
+    subset(bInput(), select = c(day_of_week, automobile_count, aggressive_driving))
   })
 
 }
