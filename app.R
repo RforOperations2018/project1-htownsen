@@ -33,8 +33,12 @@ day.options = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturda
 # Rename cell_phone indicator to "Yes" and "No"
 df.load$cell_phone = mapvalues(df.load$cell_phone, from = c(0, 1), to = c("No", "Yes"))
 
+# Rename deer_related indicator to "Yes" and "No"
+df.load$deer_related = mapvalues(df.load$deer_related, from = c(0, 1), to = c("No", "Yes"))
+
 pdf(NULL)
 
+############################################################################################################################
 # Shiny Dashboard Section which defines the UI
 # Starting with the header
 header <- dashboardHeader(title ="Crash Dashboard")
@@ -69,11 +73,11 @@ sidebar <-dashboardSidebar(
 
 body <- dashboardBody(tabItems(
   tabItem("dist",
-          # fluidRow(
-          #   valueBoxOutput("crashes"),
-          #   infoBoxOutput("bikes"),
-          #   valueBoxOutput("deaths") # fatal_count
-          # ),
+          fluidRow(
+            valueBoxOutput("crashes"),
+            infoBoxOutput("bikes"),
+            valueBoxOutput("deaths") # fatal_count
+          ),
           fluidRow(
             tabBox(title = "Distractions",
                    width = 12,
@@ -115,7 +119,24 @@ server <- function(input, output) {
   # PLOT 1: Cell Phones Plot
   output$plotphone <- renderPlotly({
     d <- dfInput()
-    ggplot(d, aes(x = cell_phone, color = cell_phone, fill = cell_phone)) + geom_bar() 
+    ggplot(d, aes(x = cell_phone, color = cell_phone, fill = cell_phone)) + 
+      geom_bar() + 
+      theme(legend.position="none")
+  })
+  
+  # PLOT 2: Deer Plot
+  output$plotdeer <- renderPlotly({
+    d <- dfInput()
+    ggplot(d, aes(x = deer_related, color = deer_related, fill = deer_related)) + 
+      geom_bar() + 
+      theme(legend.position="none")
+  })
+  # Value Box 1: 
+  output$height <- renderValueBox({
+    sw <- swInput()
+    num <- round(mean(sw$height, na.rm = T), 2)
+    
+    valueBox(subtitle = "Avg Height", value = num, icon = icon("sort-numeric-asc"), color = "green")
   })
 
 }
