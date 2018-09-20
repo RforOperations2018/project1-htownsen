@@ -137,6 +137,7 @@ body <- dashboardBody(tabItems(
 ),
   tabItem("gen",
           fluidPage(
+            valueBoxOutput("injury"),
             box(title = "General Crash Information", status = "primary", plotlyOutput("plotgen", height = 500), width=12)
           )
           )
@@ -260,6 +261,13 @@ server <- function(input, output) {
       theme(legend.position="none") +
       xlab("Number of People Involved in Crash") +
       ylab("Number of Automobiles Involved in Crash")
+  })
+  
+  # Value Box 3: Total People Involved
+  output$injury <- renderValueBox({
+    d <- dfInput()
+    num4 <- sum(d$injury_count, na.rm = T)
+    valueBox(subtitle = "Total Injuries Sustained", value = num4, icon = icon("wheelchair"), color = "orange")
   })
 
 }
