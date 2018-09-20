@@ -138,6 +138,8 @@ body <- dashboardBody(tabItems(
   tabItem("gen",
           fluidPage(
             valueBoxOutput("injury"),
+            infoBoxOutput("motorcycle"),
+            valueBoxOutput("peds"),
             box(title = "General Crash Information", status = "primary", plotlyOutput("plotgen", height = 500), width=12)
           )
           )
@@ -221,7 +223,7 @@ server <- function(input, output) {
   output$crashes <- renderValueBox({
     d <- dfInput()
     num <- sum(d$automobile_count, na.rm = T)
-    valueBox(subtitle = "Total Automobiles", value = num, icon = icon("car"), color = "maroon")
+    valueBox(subtitle = "Total Automobiles", value = num, icon = icon("car"), color = "aqua")
   })
   
   # Value Box 2: Total Deaths
@@ -268,6 +270,19 @@ server <- function(input, output) {
     d <- dfInput()
     num4 <- sum(d$injury_count, na.rm = T)
     valueBox(subtitle = "Total Injuries Sustained", value = num4, icon = icon("wheelchair"), color = "orange")
+  })
+  # Info Box 2: Motorcycles
+  output$motorcycle <- renderInfoBox({
+    d <- dfInput()
+    num5 <- round(mean(d$motorcycle_count, na.rm = T), 1)
+    infoBox("Avg # Motorcycles", value = num5, subtitle = paste("out of", nrow(d), "total crashes"), 
+            icon = icon("motorcycle"), color = "purple")
+  })
+  # Value Box 4: Total Pedestrians Involved
+  output$peds <- renderValueBox({
+    d <- dfInput()
+    num6 <- sum(d$ped_count, na.rm = T)
+    valueBox(subtitle = "Total Pedestrians Involved", value = num6, icon = icon("female"), color = "orange")
   })
 
 }
