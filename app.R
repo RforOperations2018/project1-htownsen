@@ -87,7 +87,7 @@ sidebar <-dashboardSidebar(
   )
 )
 
-
+# Dashboard Body
 body <- dashboardBody(tabItems(
   tabItem("dist",
           fluidRow(
