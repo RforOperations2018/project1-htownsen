@@ -9,7 +9,6 @@
 #On the server side your plots and tables must utilize the reactive function for any and all datasets.
 #Your final app must work when deployed to shinyapps.io.
 
-
 # Loading in the necessary libraries
 library(shiny)
 library(shinydashboard)
@@ -20,6 +19,7 @@ library(dplyr)
 library(plotly)
 library(shinythemes)
 
+# DATA LOADING AND CLEANING
 # Loading in the csv file: Beaver County Crash Data from the WPRDC
 df.load = read.csv("crashdata_beaver15.csv", strip.white = T)
 # Make all the column headers lower cased, so they are easier to type
@@ -146,11 +146,9 @@ body <- dashboardBody(tabItems(
 )
 )
 
-
 # The UI just creates the combined dashboard page. 
 ui <- dashboardPage(header, sidebar, body)
       
-
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -274,8 +272,8 @@ server <- function(input, output) {
   # Info Box 2: Motorcycles
   output$motorcycle <- renderInfoBox({
     d <- dfInput()
-    num5 <- round(mean(d$motorcycle_count, na.rm = T), 1)
-    infoBox("Avg # Motorcycles", value = num5, subtitle = paste("out of", nrow(d), "total crashes"), 
+    num5 <- sum(d$motorcycle_count, na.rm = T)
+    infoBox("Total Motorcycles", value = num5, subtitle = paste("out of", nrow(d), "total crashes"), 
             icon = icon("motorcycle"), color = "purple")
   })
   # Value Box 4: Total Pedestrians Involved
