@@ -125,7 +125,12 @@ body <- dashboardBody(tabItems(
                 checkboxInput("tailSelect", "Tailgating")
           )
           )
-)
+),
+  tabItem("gen",
+          fluidPage(
+            box(title = "General Crash Information", status = "primary", plotOutput("plotgen", height = 500), width=12)
+          )
+          )
 )
 )
 
@@ -220,6 +225,14 @@ server <- function(input, output) {
   # Data Table filtered by behaviors
   output$table <- DT::renderDataTable({
     subset(bInput(), select = c(day_of_week, automobile_count, aggressive_driving))
+  })
+  
+  # PLOT 4: General Line Plot
+  output$plotgen <- renderPlot({
+    d <- dfInput()
+    ggplot(d, aes(x = person_count, y = automobile_count, fill = fatal)) + 
+      geom_count() + 
+      theme(legend.position="none")
   })
 
 }
