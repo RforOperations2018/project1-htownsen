@@ -135,6 +135,17 @@ server <- function(input, output) {
     return(df)
   })
   
+  # Second Reactive Group for Weather Page, includes main filters on sidebar
+  wInput <- reactive({
+    df <- df.load %>% 
+      # Day of the week filter
+      filter(day_of_week %in% input$daySelect) %>%
+      # Slider for number of cars filter
+      filter(automobile_count >= input$autoSelect[1] & automobile_count <= input$autoSelect[2]) %>%
+      filter(weather %in% input$weathSelect)
+    return(df)
+  })
+  
   # PLOT 1: Cell Phones Plot
   output$plotphone <- renderPlotly({
     d <- dfInput()
@@ -169,6 +180,14 @@ server <- function(input, output) {
     d <- dfInput()
     num3 <- sum(d$bicycle_count, na.rm = T)
     infoBox("Total Bikes", value = num3, subtitle = paste(nrow(d), "total crashes"), icon = icon("bicycle"), color = "purple")
+  })
+  
+  # PLOT 3: Weather Plot
+  output$plotweath <- renderPlot({
+    w <- wInput()
+    ggplot(w, aes(x = weather, color = weather, fill = weather)) + 
+      geom_bar() + 
+      theme(legend.position="none")
   })
 
 }
