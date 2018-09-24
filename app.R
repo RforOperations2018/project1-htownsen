@@ -123,7 +123,7 @@ body <- dashboardBody(tabItems(
   ),
   tabItem("beh",
           fluidRow(
-            box(title = "Data Table: Option to Filter by Behaviors", status = "primary", DT::dataTableOutput("table"), width = 8),
+            box(title = "Data Table: Option to Filter by Behaviors", status = "primary", DT::dataTableOutput("table"), width = 8), # Either this table needed to be wider, or see my comments in the server
             box(width=4,
                 title="Inputs", status = "warning",
                 tags$b("Select Behavior(s):"),
@@ -165,6 +165,7 @@ server <- function(input, output) {
   
   # Second Reactive Group for Weather Page, includes main filters on sidebar
   wInput <- reactive({
+    # Now one think you could have done differently, is pull dfInput here and just administer your weather filter in wInput. 
     df <- df.load %>% 
       # Day of the week filter
       filter(day_of_week %in% input$daySelect) %>%
@@ -247,7 +248,7 @@ server <- function(input, output) {
       xlab("Weather Condition(s)") +
       ylab("Number of Observations in the Data")
   })
-  
+  # You should have enabled horizontal scrolling in DT, looks a bit strange on a screen with smaller resolution.s
   # Data Table filtered by behaviors
   output$table <- DT::renderDataTable({
     subset(bInput(), select = c(day_of_week, automobile_count, aggressive_driving, alcohol_related, speeding, tailgating))
